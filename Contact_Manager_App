@@ -1,0 +1,115 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Nov  5 12:57:08 2024
+
+@author: valiant
+"""
+
+import csv
+import os
+
+FileLoc = "ContactManagerData.csv"
+ContactData = []
+
+def ShowCommandList():
+    print("1 - Create New Contact File")
+    print("2 - Add New Contact")
+    print("3 - View All Contacts")
+    print("4 - Modify An Existing Contact")
+    print("5 - Save and Exit")
+
+def SaveData():
+    with open(FileLoc, "w") as File:
+        WriteData = csv.writer(File)
+        WriteData.writerows(ContactData)
+        print("Saved Contact Data!")
+        #print(ContactData)
+
+def LoadData():
+    if not os.path.exists(FileLoc):
+        SaveData()
+        print("Creating New ContactData file")
+    with open(FileLoc, "r") as File:
+        ReadData = csv.reader(File)
+        for row in ReadData:
+            ContactData.append(row)
+    print("Loaded Contact Data!")
+    #print(ContactData)
+
+def CreateNewContact():
+    Name = input("Enter The New Contact Name: ")
+    PhoneNumber = input("Enter New Contact Phone Number: ")
+    Email = input("Enter The New Email Address: ")
+    ContactData.append([
+        Name,
+        PhoneNumber,
+        Email
+        ])
+    print("Created New Contact Successfully!")
+
+def ViewAllContacts():
+    print("\n")
+    print("Contact Info")
+    print("------------------------------")
+    print("Name \t \t Phone \t \t Email")
+    for Contact in ContactData:
+        print(f"{Contact[0]} \t \t {Contact[1]} \t \t {Contact[2]}")
+
+def ModifyContact():
+    #print("\n")
+    ViewAllContacts()
+    print("Modify Contact")
+    print("---------------------------")
+    while True:
+        ModifyName = input("Enter the Name of the Contact you want to modify: ")
+        for Contact in ContactData:
+            if Contact[0] == ModifyName:
+                NewPhoneNumber = input("Enter New Phone Number: ")
+                NewEmail = input("Enter New Email: ")
+                Contact[1] = NewPhoneNumber
+                Contact[2] = NewEmail
+                SaveData()
+                print("Updated Contact Data Successfully!")
+                return 
+        print("Contact not found! (enter the exact name as shown)")
+    
+
+def RunCommands():
+    while True:
+        print("\nEnter the following commands to perform the corresponding action:")
+        ShowCommandList()
+        Command = input("Enter a command Number: ")
+        print("\n----------------------")
+        Command = Command[0]
+        if Command.isdigit():
+            Command = int(Command)
+            if Command <= 5 and Command > 0:
+                if Command == 1: # Just clears the old data from file
+                    os.remove(FileLoc)
+                    ContactData.clear()
+                    SaveData()
+                    print("Created New Contact File Successfully!")
+                if Command == 2:
+                    CreateNewContact()
+                if Command == 3:
+                    ViewAllContacts()
+                if Command == 4:
+                    ModifyContact()
+                if Command == 5:
+                    SaveData()
+                    print("Exiting...")
+                    break
+            else:
+                print("Unknown Command!")
+        else:
+            print("Unknown Command!")
+    
+def Main():
+    print("Welcome to the Contact Manager App")
+    print("----------------------------------")
+    LoadData()
+    RunCommands()
+    SaveData()
+    print("---------------- Completed By Valiant Hulsey ----------------")
+Main()
